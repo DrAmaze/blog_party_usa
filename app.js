@@ -2,11 +2,14 @@ require('dotenv').config({ path: './variables.env' });
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const app = express();
 
 app.set('views', 'views');
 app.set('view engine', 'pug');
+
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'styles')));
