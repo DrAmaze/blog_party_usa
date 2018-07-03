@@ -5,6 +5,15 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+mongoose.connect(`${process.env.DATABASE}`, { useMongoClient: true });
+
+const db = mongoose.connection;
+db.on('error', (err) => {console.error(err);});
+db.once('open', function() {
+  console.log('it works!');
+});
+
 const app = express();
 
 app.set('views', 'views');
@@ -35,19 +44,14 @@ const sampleColor = () => {
   return colors[randomIdx];
 };
 const addColorToReq = (req, res, next) => {
-  // check if this is the first time middleware is invoked
   if (req.colors instanceof Array) {
-    // previous middleware has set a 'colors' property
-    // Note: It's the same request object!
     req.colors.push(sampleColor());
   } else {
     req.colors = [sampleColor()];
   }
-  // invoking next ensures our following middleware will be run
   next();
 };
 
-// we could also pass an array containing all middlewares as our second argument. Try it!
 app.get(
   '/three-colors',
   addColorToReq,
